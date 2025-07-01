@@ -40,9 +40,9 @@ export default function PublicDashboard() {
   });
 
   const getEmoji = () => {
-    if (count <= 3) return '😊';
-    if (count <= 7) return '😐';
-    return '😠';
+    if (count <= 3) return '😊😊😊';
+    if (count <= 7) return '😐😐😐';
+    return '😠😠😠';
   };
 
   return (
