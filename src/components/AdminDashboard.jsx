@@ -18,14 +18,37 @@ export default function AdminDashboard({ user }) {
   const [filter, setFilter] = useState('today');
   const navigate = useNavigate();
 
+  const [names, setNames] = useState([]);
+  const [newName, setNewName] = useState('');
+  const [showList, setShowList] = useState(false);
+
   useEffect(() => {
     loadViolations();
+    loadNames();
   }, []);
 
   const loadViolations = async () => {
     const snapshot = await getDocs(collection(db, 'violations'));
     const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     setViolations(data);
+  };
+
+  const loadNames = async () => {
+    const snapshot = await getDocs(collection(db, 'names'));
+    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    setNames(data);
+  };
+
+  const handleAddName = async () => {
+    if (!newName.trim()) return;
+    await addDoc(collection(db, 'names'), { name: newName });
+    setNewName('');
+    loadNames();
+  };
+
+  const handleDeleteName = async id => {
+    await deleteDoc(doc(db, 'names', id));
+    loadNames();
   };
 
   const handleSubmit = async e => {
@@ -138,10 +161,9 @@ export default function AdminDashboard({ user }) {
             animate={false}
             needleColor="#2f3e5c"
             needleBaseColor="#2f3e5c"
-            textColor="transparent" // menyembunyikan teks persen
+            textColor="transparent"
             percent={gaugePercent}
           />
-
         </div>
       </div>
 
@@ -150,14 +172,17 @@ export default function AdminDashboard({ user }) {
           onSubmit={handleSubmit}
           className="mb-10 grid grid-cols-1 md:grid-cols-3 gap-4 items-end"
         >
-
-          <input
-            type="text"
-            placeholder="Nama Pelanggar"
+          <select
             className="border p-2 rounded"
             value={form.name}
             onChange={e => setForm({ ...form, name: e.target.value })}
-          />
+          >
+            <option value="">Pilih Nama</option>
+            {names.map(n => (
+              <option key={n.id} value={n.name}>{n.name}</option>
+            ))}
+          </select>
+
           <input
             type="text"
             placeholder="Jenis Pelanggaran"
@@ -165,14 +190,55 @@ export default function AdminDashboard({ user }) {
             value={form.type}
             onChange={e => setForm({ ...form, type: e.target.value })}
           />
+
           <button
             type="submit"
             className="bg-[#336cb0] text-white px-4 py-2 rounded hover:bg-[#0047a0]"
           >
             Simpan Data Pelanggaran
           </button>
-
         </form>
+
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-[#1c2a59] mb-2">Tambah Nama Pelanggar</h2>
+          <div className="flex gap-2 mb-2">
+            <input
+              type="text"
+              placeholder="Nama Baru"
+              className="border p-2 rounded w-full"
+              value={newName}
+              onChange={e => setNewName(e.target.value)}
+            />
+            <button
+              onClick={handleAddName}
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-[#0047a0]"
+            >
+              Tambah
+            </button>
+          </div>
+          <button
+            onClick={() => setShowList(!showList)}
+            className="text-sm text-blue-600 hover:underline mb-2"
+          >
+            {showList ? 'Sembunyikan Daftar Nama' : 'Tampilkan Daftar Nama'}
+          </button>
+
+          {showList && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+              {names.map(n => (
+                <div key={n.id} className="flex justify-between items-center border p-2 rounded">
+                  <span>{n.name}</span>
+                  <button
+                    onClick={() => handleDeleteName(n.id)}
+                    className="text-red-600 text-sm hover:underline"
+                  >
+                    Hapus
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
 
         <div className="flex gap-4 mb-4">
           <button

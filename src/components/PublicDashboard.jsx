@@ -3,13 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 import GaugeChart from 'react-gauge-chart';
-import { Link } from 'react-router-dom';
-import icon from './Indikator.png';
+// import { Link } from 'react-router-dom';
+import icon from './icon.png';
 import logo from './InTress-KPPN-Liwa.png';
 import logo1 from './KEMENKEU_LOGO-VERTICAL_W-1.png';
 import logo2 from './Master-Logo-DJPb.png';
-import logo3 from './logo-ih-papi.png';
-
 
 export default function PublicDashboard() {
   const [count, setCount] = useState(0);
@@ -57,7 +55,6 @@ export default function PublicDashboard() {
         {/* Kanan: Logo InTress dan ihpapi (ihpapi di paling kanan) */}
         <div className="flex items-center gap-4">
           <img src={logo} alt="Logo InTress" className="h-16" />
-          <img src={logo3} alt="Logo ihpapi" className="h-16" />
         </div>
       </header>
 
@@ -68,10 +65,8 @@ export default function PublicDashboard() {
           <h1 className="text-4xl font-semibold text-[#2a4f7e] mb-5 leading-tight">
             Indikator Harian <br /> Pengawasan Perilaku Internal
           </h1>
-          <img src={icon} alt="PNS" className="w-[400px] h-auto" />
-          <Link to="/login" className="bg-blue-600 text-white px-20 py-2 rounded-full hover:font-semibold text-lg shadow-md">
-            Log In
-          </Link>
+          <img src={icon} alt="PNS" className="w-[350px] h-auto" />
+          
         </div>
 
         <div className="bg-[#dbeafe] p-6 rounded-lg flex flex-col gap-4 shadow-md">
@@ -100,7 +95,7 @@ export default function PublicDashboard() {
               needleBaseColor="#333"
               textColor="#00000000"
             />
-            <div className="text-5xl text-center">{getEmoji()}</div>
+            <div className="text-8xl text-center">{getEmoji()}</div>
           </div>
         </div>
       </div>

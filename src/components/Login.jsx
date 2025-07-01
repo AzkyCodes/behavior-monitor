@@ -3,9 +3,8 @@ import React, { useState } from 'react';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
-import icon from './Indikator.png';
+import icon from './icon.png';
 import logo from './InTress-KPPN-Liwa.png'; 
-import logo1 from './logo-ih-papi.png'; 
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -30,13 +29,6 @@ export default function Login() {
         src={logo}
         alt="InTress"
         className="absolute top-3 left-6 h-20 w-auto z-10"
-      />
-
-      {/* === Logo Kanan Atas === */}
-      <img
-        src={logo1}
-        alt="ihpapi"
-        className="absolute top-3 right-6 h-20 w-auto z-10"
       />
 
       {/* === Kiri - Form Login === */}
@@ -92,7 +84,7 @@ export default function Login() {
         <h1 className="text-3xl md:text-6xl font-bold text-[#274e7d] pb-10 leading-relaxed mt-10">
           Indikator Harian <br /> Pengawasan Perilaku <br /> Internal
         </h1>
-        <img src={icon} alt="PNS" className="w-[400px] h-auto" />
+        <img src={icon} alt="PNS" className="w-[360px] h-auto" />
       </div>
     </div>
   );
