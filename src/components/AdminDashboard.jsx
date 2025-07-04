@@ -53,9 +53,11 @@ export default function AdminDashboard({ user }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    const today = new Date().toISOString().split('T')[0];
-    const newViolation = { ...form, date: today };
-    await addDoc(collection(db, 'violations'), newViolation);
+    if (!form.date) {
+      alert("Tanggal wajib diisi.");
+      return;
+    }
+    await addDoc(collection(db, 'violations'), form);
     setForm({ name: '', type: '', date: '' });
     loadViolations();
   };
@@ -99,6 +101,10 @@ export default function AdminDashboard({ user }) {
   };
 
   const today = new Date().toISOString().split('T')[0];
+  const yesterdayDate = new Date();
+  yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+  const yesterday = yesterdayDate.toISOString().split('T')[0];
+
   const isSameWeek = (dateStr) => {
     const today = new Date();
     const date = new Date(dateStr);
@@ -114,19 +120,20 @@ export default function AdminDashboard({ user }) {
 
   const filteredViolations = violations.filter(v => {
     if (filter === 'today') return v.date === today;
+    if (filter === 'yesterday') return v.date === yesterday;
     if (filter === 'week') return isSameWeek(v.date);
     if (filter === 'month') return isSameMonth(v.date);
     return true;
   });
 
-  const todayCount = filteredViolations.length;
+  const todayCount = violations.filter(v => v.date === today).length;
   const gaugePercent = Math.min(todayCount / 10, 1);
 
   return (
     <div className="min-h-screen bg-white">
-      <header className="text-[#2a4f7e] px-6 py-4 flex justify-between items-center px-6 py-4 border-b-2 border-[#0047a0]">
+      <header className="text-[#2a4f7e] px-6 py-4 flex justify-between items-center border-b-2 border-[#0047a0]">
         <img src={logo} alt="Intress" className="h-12 w-auto mb-2" />
-        <button onClick={logout} className="bg-blue-600 text-white px-3 py-1 rounded col-span-full hover:bg-[#ef3a37]">
+        <button onClick={logout} className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-[#ef3a37]">
           Log Out
         </button>
       </header>
@@ -141,6 +148,7 @@ export default function AdminDashboard({ user }) {
           className="border border-gray-300 rounded p-2"
         >
           <option value="today">Hari Ini</option>
+          <option value="yesterday">Kemarin</option>
           <option value="week">Minggu Ini</option>
           <option value="month">Bulan Ini</option>
           <option value="all">Semua</option>
@@ -149,7 +157,7 @@ export default function AdminDashboard({ user }) {
 
       <div className="flex justify-center gap-10 flex-wrap mb-20 px-4">
         <div className="bg-[#f0f4ff] rounded-xl shadow-md p-12 w-55 text-center">
-          <p className="flex justify-center text-xl font-semibold text-[#1c2a59]">Total Pelanggaran</p>
+          <p className="text-xl font-semibold text-[#1c2a59]">Total Pelanggaran Hari Ini</p>
           <p className="text-6xl font-bold text-[#1c2a59] mt-2">{todayCount}</p>
         </div>
         <div className="bg-[#f0f4ff] rounded-xl shadow-md p-6 w-70 flex items-center justify-center">
@@ -170,7 +178,7 @@ export default function AdminDashboard({ user }) {
       <div className="max-w-5xl mx-auto px-4">
         <form
           onSubmit={handleSubmit}
-          className="mb-10 grid grid-cols-1 md:grid-cols-3 gap-4 items-end"
+          className="mb-10 grid grid-cols-1 md:grid-cols-4 gap-4 items-end"
         >
           <select
             className="border p-2 rounded"
@@ -191,11 +199,18 @@ export default function AdminDashboard({ user }) {
             onChange={e => setForm({ ...form, type: e.target.value })}
           />
 
+          <input
+            type="date"
+            className="border p-2 rounded"
+            value={form.date}
+            onChange={e => setForm({ ...form, date: e.target.value })}
+          />
+
           <button
             type="submit"
             className="bg-[#336cb0] text-white px-4 py-2 rounded hover:bg-[#0047a0]"
           >
-            Simpan Data Pelanggaran
+            Simpan
           </button>
         </form>
 
